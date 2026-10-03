@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- IsAotCompatible turns the trim and AOT analysers on for THIS build, so a violation is
+         reported where it was written rather than at some consumer's publish. It is the reason this
+         library can promise AOT-cleanliness instead of hoping for it. -->
+    <IsAotCompatible>true</IsAotCompatible>
+    <IsTrimmable>true</IsTrimmable>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+
+    <!-- Public API, so the XML docs are user-facing and CS1591 stays on. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <IsPackable>true</IsPackable>
+    <PackageId>Schipper.Io.Sqlite</PackageId>
+    <Version>0.1.0-dev</Version>
+    <Authors>Chris Schipper</Authors>
+    <Copyright>Copyright (c) Chris Schipper</Copyright>
+    <Description>An opinionated bridge from .NET to SQLite: source-generated repositories with CRUD, upsert, keyset paging, streaming reads, audit columns and optimistic concurrency, generated from your row types. Native AOT clean.</Description>
+    <PackageTags>sqlite;source-generator;aot;repository;dapper-alternative;orm</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="/" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Analyzer-only: the generator never enters the reference graph, and so never enters the AOT
+         compilation. It is referenced here rather than only by consumers so that _PackGenerator
+         below can find the built DLL. -->
+    <ProjectReference Include="..\..\Schipper.Io.Sqlite.Generator\src\Schipper.Io.Sqlite.Generator.csproj"
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- One PackageId delivers both halves: the runtime assembly in lib/, the generator in analyzers/.
+       This is what makes the split invisible to consumers — they reference one package and get the
+       attributes, the base class, the runtime types AND the code generation.
+
+       Note the asymmetry inside THIS repo: analyzers do not flow across a ProjectReference, so
+       sibling projects must reference the generator explicitly as well. That wart exists only for
+       repo-local project references; it disappears the moment anything consumes the package. -->
+  <Target Name="_PackGenerator" BeforeTargets="_GetPackageFiles" DependsOnTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <None Include="@(Analyzer)"
+            Condition="'%(Filename)' == 'Schipper.Io.Sqlite.Generator'"
+            Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="MSTest" />
+
+    <!-- The generator is DRIVEN here, not applied. CSharpGeneratorDriver runs it over source built
+         in-memory, which is what makes it possible to assert on a row type that should FAIL. A row
+         type that must not compile cannot live in a project that has to compile. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Schipper.Io.Sqlite.Generator.csproj" />
+    <ProjectReference Include="..\..\..\Schipper.Io.Sqlite\src\Schipper.Io.Sqlite.csproj" />
+  </ItemGroup>
+
+</Project>

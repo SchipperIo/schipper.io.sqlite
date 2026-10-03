@@ -1,0 +1,11 @@
+<Project>
+
+  <!-- ArtifactsPath would otherwise send nupkgs to artifacts/build/package/{config}/.
+       Only Schipper.Io.Sqlite is packable; tests and the bench stay out of dist. -->
+  <PropertyGroup Condition="'$(IsPackable)' == 'true' and '$(MSBuildProjectName)' == 'Schipper.Io.Sqlite'">
+    <PackageOutputPath>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)artifacts\dist'))</PackageOutputPath>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+</Project>

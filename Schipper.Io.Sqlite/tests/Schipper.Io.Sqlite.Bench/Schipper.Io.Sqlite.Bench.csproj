@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Schipper.Io.Sqlite.Bench</AssemblyName>
+    <RootNamespace>Schipper.Io.Sqlite.Bench</RootNamespace>
+
+    <!-- Published natively on purpose. The bench and the audit checks are the only place the
+         generated code is exercised under Native AOT, which is a stronger signal than a JIT test
+         host: an ILC failure shows up here rather than in production. -->
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <!-- Server GC skews a short benchmark; keep collections predictable. -->
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Analyzers do not flow across a ProjectReference, so the generator is referenced explicitly.
+         Consumers of the packed package do not need this second reference. -->
+    <ProjectReference Include="..\..\src\Schipper.Io.Sqlite.csproj" />
+    <ProjectReference Include="..\..\..\Schipper.Io.Sqlite.Generator\src\Schipper.Io.Sqlite.Generator.csproj"
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

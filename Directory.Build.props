@@ -1,0 +1,37 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsPackable>false</IsPackable>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts\build</ArtifactsPath>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- The generator is a Roslyn analyzer: it must target netstandard2.0, not the library TFM. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' != 'Schipper.Io.Sqlite.Generator'">
+    <TargetFramework>net10.0</TargetFramework>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <OutputType>Exe</OutputType>
+    <EnableMSTestRunner>true</EnableMSTestRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --results-directory "$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)artifacts\testresults'))"</TestingPlatformCommandLineArguments>
+    <VSTestResultsDirectory>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)artifacts\testresults'))</VSTestResultsDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Bench'))">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

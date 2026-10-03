@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Schipper.Io.Sqlite/">
+    <Project Path="Schipper.Io.Sqlite/src/Schipper.Io.Sqlite.csproj" />
+    <Project Path="Schipper.Io.Sqlite/tests/Schipper.Io.Sqlite.Tests/Schipper.Io.Sqlite.Tests.csproj" />
+    <Project Path="Schipper.Io.Sqlite/tests/Schipper.Io.Sqlite.Bench/Schipper.Io.Sqlite.Bench.csproj" />
+  </Folder>
+  <Folder Name="/Schipper.Io.Sqlite.Generator/">
+    <Project Path="Schipper.Io.Sqlite.Generator/src/Schipper.Io.Sqlite.Generator.csproj" />
+    <Project Path="Schipper.Io.Sqlite.Generator/tests/Schipper.Io.Sqlite.Generator.Tests/Schipper.Io.Sqlite.Generator.Tests.csproj" />
+  </Folder>
+</Solution>

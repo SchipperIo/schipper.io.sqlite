@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore Schipper.Io.Sqlite.slnx
+      - run: dotnet build Schipper.Io.Sqlite.slnx --no-restore -c Release
+      - run: dotnet test Schipper.Io.Sqlite.slnx --no-build -c Release --verbosity normal
+      - run: dotnet pack Schipper.Io.Sqlite/src/Schipper.Io.Sqlite.csproj --no-restore -c Release
+      - name: Confirm package
+        run: |
+          shopt -s nullglob
+          nupkgs=(artifacts/dist/*.nupkg)
+          snupkgs=(artifacts/dist/*.snupkg)
+          test ${#nupkgs[@]} -eq 1
+          test ${#snupkgs[@]} -eq 1
+          [[ ${nupkgs[0]} == artifacts/dist/Schipper.Io.Sqlite.*.nupkg ]]
+          [[ ${nupkgs[0]} != *Tests* && ${nupkgs[0]} != *Bench* ]]
+          ls -l artifacts/dist
